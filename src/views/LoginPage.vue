@@ -1,6 +1,7 @@
 <script>
-import { createUser, getUser, getUsers } from '@/api/users';
-import NeedToRegister from '@/components/NeedToRegister.vue';
+  import { createUser, getUsers } from '@/api/users';
+  import NeedToRegister from '@/components/NeedToRegister.vue';
+  import { getLocalUser } from '@/helpers/getLocalUser';
 
   export default {
     name: 'LoginPage',
@@ -8,15 +9,6 @@ import NeedToRegister from '@/components/NeedToRegister.vue';
       NeedToRegister,
     },
     data() {
-      let user = {};
-      const jsonData = localStorage.getItem('user') || '{}';
-
-      try {
-        user = JSON.parse(jsonData);
-      } catch (e) {
-        this.errorMessage = 'Error reading local storage';
-      }
-
       return {
         email: '',
         userName: '',
@@ -24,27 +16,20 @@ import NeedToRegister from '@/components/NeedToRegister.vue';
         errorMessage: '',
         needRegister: false,
         users: [],
-        user,
+        user: getLocalUser(),
       };
     },
-    watch: {
-      user: {
-        deep: true,
-        handler() {
-          localStorage.setItem('user', JSON.stringify(this.user));
-        },
-      }
-    },
+    // watch: {
+    //   user: {
+    //     deep: true,
+    //     handler() {
+    //       localStorage.setItem('user', JSON.stringify(this.user));
+    //     },
+    //   }
+    // },
     mounted() {
       if (this.user.id) {
-        getUser(this.user.id)
-          .then(({ data }) => {
-            this.user = data;
-            this.$router.push({ path: "/" });
-          })
-          .catch(() => {
-            this.errorMessage = 'Unable to load user';
-          });
+        this.$router.push({ path: "/" });
       }
     },
     methods: {
@@ -59,8 +44,8 @@ import NeedToRegister from '@/components/NeedToRegister.vue';
 
               const user = this.users.find(item => item.email === this.email);
 
-              if (user) { 
-                this.user = user;
+              if (user) {
+                localStorage.setItem('user', JSON.stringify(user));
                 this.$router.push({ path: "/" });
               } else {
                 this.needRegister = true;
@@ -75,7 +60,7 @@ import NeedToRegister from '@/components/NeedToRegister.vue';
         } else {
           createUser(this.userName, this.email)
             .then(({ data }) => {
-              this.user = data;
+              localStorage.setItem('user', JSON.stringify(data));
               this.$router.push({ path: "/" });
               this.needRegister = false;
             })

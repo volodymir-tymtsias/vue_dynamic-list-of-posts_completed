@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginPage from '../views/LoginPage.vue'
-
-
+import { getLocalUser } from '@/helpers/getLocalUser';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,17 +23,10 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.needsAuth) {
-    let user;
-    const jsonData = localStorage.getItem('user') || '{}';
-
-    try {
-      user = JSON.parse(jsonData);
-      if (user.id) {
-        next();
-      } else {
-        next("/login");
-      }
-    } catch (e) {
+    const user = getLocalUser();
+    if (user.id) {
+      next();
+    } else {
       next("/login");
     }
   } else {
