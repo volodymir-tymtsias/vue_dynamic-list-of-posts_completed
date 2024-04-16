@@ -1,4 +1,5 @@
 <script>
+import { createUser, getUser, getUsers } from '@/api/users';
 import NeedToRegister from '@/components/NeedToRegister.vue';
 
   export default {
@@ -7,18 +8,84 @@ import NeedToRegister from '@/components/NeedToRegister.vue';
       NeedToRegister,
     },
     data() {
+      let user = {};
+      const jsonData = localStorage.getItem('user') || '{}';
+
+      try {
+        user = JSON.parse(jsonData);
+      } catch (e) {
+        this.errorMessage = 'Error reading local storage';
+      }
+
       return {
         email: '',
         userName: '',
-        emailSent: false,
         loading: false,
         errorMessage: '',
         needRegister: false,
+        users: [],
+        user,
       };
     },
+    watch: {
+      user: {
+        deep: true,
+        handler() {
+          localStorage.setItem('user', JSON.stringify(this.user));
+        },
+      }
+    },
+    mounted() {
+      if (this.user.id) {
+        getUser(this.user.id)
+          .then(({ data }) => {
+            this.user = data;
+            this.$router.push({ path: "/" });
+          })
+          .catch(() => {
+            this.errorMessage = 'Unable to load user';
+          });
+      }
+    },
     methods: {
-      handleSubmit(event) {
-        console.log(event);
+      handleSubmit() {
+        this.errorMessage = '';
+        this.loading = true;
+
+        if (!this.needRegister) {
+          getUsers()
+            .then(({ data }) => {
+              this.users = data;
+
+              const user = this.users.find(item => item.email === this.email);
+
+              if (user) { 
+                this.user = user;
+                this.$router.push({ path: "/" });
+              } else {
+                this.needRegister = true;
+              }
+            })
+            .catch(() => {
+              this.errorMessage = 'Unable to read users';
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        } else {
+          createUser(this.userName, this.email)
+            .then(({ data }) => {
+              this.user = data;
+              this.$router.push({ path: "/" });
+              this.needRegister = false;
+            })
+            .catch(() => {
+              this.errorMessage = 'Unable to create user';
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        }
       }
     },
   }
@@ -28,7 +95,7 @@ import NeedToRegister from '@/components/NeedToRegister.vue';
   <section class="container is-flex is-justify-content-center">
     <form @submit.prevent="handleSubmit" class="box mt-5">
       <h1 class="title is-3">
-        {{ emailSent ? 'You need to register' : 'Get your userId' }}
+        {{ needRegister ? 'You need to register' : 'Get your userId' }}
       </h1>
 
       <div class="field">
@@ -56,7 +123,7 @@ import NeedToRegister from '@/components/NeedToRegister.vue';
       <NeedToRegister 
         v-model="userName" 
         :loading="loading"
-        v-if="emailSent && !errorMessage && needRegister"
+        v-if="!errorMessage && needRegister"
       />
 
       <div class="field">
@@ -66,7 +133,7 @@ import NeedToRegister from '@/components/NeedToRegister.vue';
           :class="{ ['is-loading']: loading }"
           :disabled="!email"
         >
-          {{ emailSent ? 'Register' : 'Login' }}
+          {{ needRegister ? 'Register' : 'Login' }}
         </button>
       </div>
     </form>
