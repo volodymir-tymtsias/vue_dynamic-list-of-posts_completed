@@ -16,7 +16,7 @@
 <template>
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-item">
-      <h2 class="is-size-4">Vue List Of Posts</h2>
+      <h1 class="is-size-4">Vue List Of Posts</h1>
     </div>
     <div class="navbar-end">
       <div class="navbar-item">

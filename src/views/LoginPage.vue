@@ -1,5 +1,6 @@
 <script>
-  import { createUser, getUsers } from '@/api/users';
+  import { createUser, getUser, getUsers } from '@/api/users';
+import LoaderSpiner from '@/components/LoaderSpiner.vue';
   import NeedToRegister from '@/components/NeedToRegister.vue';
   import { getLocalUser } from '@/helpers/getLocalUser';
 
@@ -7,12 +8,14 @@
     name: 'LoginPage',
     components: {
       NeedToRegister,
+      LoaderSpiner,
     },
     data() {
       return {
         email: '',
         userName: '',
         loading: false,
+        preLoadingUser: false,
         errorMessage: '',
         needRegister: false,
         users: [],
@@ -29,7 +32,20 @@
     // },
     mounted() {
       if (this.user.id) {
-        this.$router.push({ path: "/" });
+        this.errorMessage = '';
+        this.preLoadingUser = true;
+        getUser(this.user.id)
+          .then(({ data }) => {
+            // this.user = data;
+            localStorage.setItem('user', JSON.stringify(data));
+            this.$router.push({ path: "/" });
+          })
+          .catch(() => {
+            this.errorMessage = 'Unable to load user';
+          })
+          .finally(() => {
+            this.preLoadingUser = false;
+          });
       }
     },
     methods: {
@@ -78,7 +94,9 @@
 
 <template>
   <section class="container is-flex is-justify-content-center">
-    <form @submit.prevent="handleSubmit" class="box mt-5">
+    <LoaderSpiner v-if="preLoadingUser"/>
+
+    <form @submit.prevent="handleSubmit" class="box mt-5" v-else>
       <h1 class="title is-3">
         {{ needRegister ? 'You need to register' : 'Get your userId' }}
       </h1>

@@ -1,7 +1,5 @@
 import { client } from "@/httpClient";
 
-// const USER_ID = 346;
-
 export const getUsers = () => {
   return client.get('/users');
 };
