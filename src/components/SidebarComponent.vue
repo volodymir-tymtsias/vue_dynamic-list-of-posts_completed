@@ -13,10 +13,8 @@
     :class="active ? 'Sidebar--open' : ''"
   >
     <div class="tile is-child box is-success ">
-      <div class="tile is-child box is-success ">
-        <div class="content">
-          <slot></slot>
-        </div>
+      <div class="content">
+        <slot></slot>
       </div>
     </div>
   </div>

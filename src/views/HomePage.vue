@@ -6,6 +6,7 @@
   import PostList from '@/components/PostList.vue';
   import MessageComponent from '@/components/MessageComponent.vue';
   import SidebarComponent from '@/components/SidebarComponent.vue';
+  import AddPost from '@/components/AddPost.vue';
 
   export default {
     name: 'HomePage',
@@ -15,6 +16,7 @@
       PostList,
       MessageComponent,
       SidebarComponent,
+      AddPost,
     },
     data() {
       return {
@@ -24,6 +26,8 @@
         user: getLocalUser(),
         sidebarIsOpen: false,
         openedPostId: null,
+        editingPostId: null,
+        addingPost: false,
       };
     },
     mounted() {
@@ -41,24 +45,36 @@
         });
     },
     methods: {
-      handleAddNewPost() {
-        
+      handlerAddNewPost() {
+        this.addingPost = true;
+        this.openedPostId = null;
+        if (!this.sidebarIsOpen) {
+          this.sidebarIsOpen = true;
+        }
       },
-      handleToggleOpenSidebar() {
-        this.sidebarIsOpen = !this.sidebarIsOpen;
+      handlerCloseSidebar() {
+        this.sidebarIsOpen = false;
+        this.openedPostId = null;
+        this.addingPost = false;
+        this.editingPostId = null;
       },
-      setOpenPostId(postId) {
-        console.log(postId, )
+      setOpenedPostId(postId) {
+        this.addingPost = false;
         if (postId === this.openedPostId) {
-          this.handleToggleOpenSidebar();
+          this.sidebarIsOpen = false;
           this.openedPostId = null;
         } else if (this.openedPostId === null) {
-          this.handleToggleOpenSidebar();
+          this.sidebarIsOpen = true;
           this.openedPostId = postId;
         } else if (postId !== this.openedPostId && this.openedPostId !== null) {
           this.openedPostId = postId;
         }
       },
+      handlerAddPost(newPost) {
+        this.posts = [...this.posts, newPost];
+        this.openedPostId = newPost.id;
+        this.addingPost = false;
+      }
     },
   }
 </script>
@@ -75,7 +91,14 @@
             <div class="block">
               <div class="block is-flex is-justify-content-space-between">
                 <h2 class="is-size-3">Posts</h2>
-                <button type="button" class="button is-link">Add New Post</button>
+                <button 
+                  type="button" 
+                  class="button is-link"
+                  :class="addingPost ? 'is-light' : ''"
+                  @click="handlerAddNewPost"
+                >
+                  Add New Post
+                </button>
               </div>
 
               <PostLoader v-if="loading" />
@@ -85,7 +108,7 @@
                   <PostList 
                     :posts="posts"
                     :openedPostId="openedPostId"
-                    @setOpenPostId="setOpenPostId($event)"
+                    @set-opened-post-id="setOpenedPostId($event)"
                     v-if="posts.length > 0"
                   />
 
@@ -107,24 +130,13 @@
         </div>
 
         <SidebarComponent :active="sidebarIsOpen">
-          <div className="block">
-            <div
-              class="is-flex is-justify-content-space-between is-align-items-center"
-            >
-              <h2>#post id: post title</h2>
-              <div class="is-flex">
-                <span class="icon is-small is-right is-clickable">
-                  <i class="fas fa-pen-to-square"></i>
-                </span>
-                <span
-                  class="icon is-small is-right has-text-danger is-clickable ml-3"
-                >
-                  <i class="fas fa-trash"></i>
-                </span>
-              </div>
-            </div>
-            <p>post body</p>
-          </div>
+          <AddPost
+            :title="'Create new post'"
+            :userId="user.id"
+            @close="handlerCloseSidebar"
+            @add-post="handlerAddPost"
+            v-if="addingPost"
+          />
         </SidebarComponent>
       </div>
     </div>

@@ -1,14 +1,14 @@
 <script>
   export default {
     name: 'HeaderComponent',
-    emits: ['setOpenPostId'],
+    emits: ['set-opened-post-id'],
     props: {
       posts: Array,
       openedPostId: Number,
     },
     methods: {
       toggleOpenSidebar(postId) {
-        this.$emit('setOpenPostId', postId);
+        this.$emit('set-opened-post-id', postId);
       },
     },
   }
