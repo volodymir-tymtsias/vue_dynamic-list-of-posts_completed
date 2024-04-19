@@ -1,5 +1,5 @@
 <script>
-import { createPost } from '@/api/posts';
+import { createPost, updatePost } from '@/api/posts';
 import InputField from './InputField.vue';
 import TextAreaField from './TextAreaField.vue';
 import MessageComponent from './MessageComponent.vue';
@@ -11,17 +11,18 @@ import MessageComponent from './MessageComponent.vue';
       TextAreaField,
       MessageComponent,
     },
-    emits: ['close', 'add-post'],
+    emits: ['close', 'add-post', 'post-updated'],
     props: {
       title: String,
       userId: Number,
+      postToEdit: Object || undefined,
     },
     data() {
       return {
-        newTitle: '',
+        newTitle: this.postToEdit ? this.postToEdit.title : '',
         errorTitle: '',
         errorPostBody: '',
-        postBody: '',
+        postBody: this.postToEdit ? this.postToEdit.body : '',
         errorMessage: '',
         loading: false,
       };
@@ -62,16 +63,30 @@ import MessageComponent from './MessageComponent.vue';
         }
         
         this.loading = true;
-        createPost(this.userId, this.newTitle, this.postBody)
-          .then(({ data }) => {
-            this.$emit('add-post', data);
-          })
-          .catch(() => {
-            this.errorMessage = 'Unable to create post';
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+
+        if (this.postToEdit) {
+          updatePost(this.postToEdit.id, this.newTitle, this.postBody)
+            .then(({ data }) => {
+              this.$emit('post-updated', data);
+            })
+            .catch(() => {
+              this.errorMessage = 'Unable to update post';
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        } else {
+          createPost(this.userId, this.newTitle, this.postBody)
+            .then(({ data }) => {
+              this.$emit('add-post', data);
+            })
+            .catch(() => {
+              this.errorMessage = 'Unable to create post';
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        }
       },
     },
   }
@@ -108,7 +123,7 @@ import MessageComponent from './MessageComponent.vue';
       <div class="field is-grouped">
         <div class="control">
           <button type="submit" class="button is-link">
-            {{ title === 'Post editing' ? 'Save' : 'Create' }}
+            {{ postToEdit ? 'Save' : 'Create' }}
           </button>
         </div>
         <div class="control">

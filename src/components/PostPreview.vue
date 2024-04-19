@@ -18,7 +18,10 @@
     >
       <h2>{{ `#${post.id}: ${post.title}` }}</h2>
       <div class="is-flex">
-        <span class="icon is-small is-right is-clickable">
+        <span 
+          class="icon is-small is-right is-clickable"
+          @click="$emit('edit-post')"
+        >
           <i class="fas fa-pen-to-square"></i>
         </span>
         <span

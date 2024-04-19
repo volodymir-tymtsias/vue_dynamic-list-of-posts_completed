@@ -28,7 +28,7 @@
         user: getLocalUser(),
         sidebarIsOpen: false,
         openedPostId: null,
-        editingPostId: null,
+        editingPost: null,
         addingPost: false,
       };
     },
@@ -55,10 +55,15 @@
         }
       },
       handlerCloseSidebar() {
-        this.sidebarIsOpen = false;
-        this.openedPostId = null;
+        if (this.editingPost) {
+          this.openedPostId = this.editingPost.id;
+        } else {
+          this.sidebarIsOpen = false;
+          this.openedPostId = null;
+        }
+        
         this.addingPost = false;
-        this.editingPostId = null;
+        this.editingPost = null;
       },
       setOpenedPostId(postId) {
         this.addingPost = false;
@@ -92,6 +97,17 @@
           this.openedPostId = null;
         });
       },
+      handlerEditPost() {
+        this.editingPost = this.posts.find(post => post.id === this.openedPostId);
+        this.openedPostId = null;
+        this.addingPost = true;
+      },
+      postUpdated(updatedPost) {
+        this.openedPostId = updatedPost.id;
+        this.addingPost = false;
+        this.posts = this.posts.map(post => post.id === updatedPost.id ? updatedPost : post);
+        this.editingPost = null;
+      }
     },
   }
 </script>
@@ -147,16 +163,19 @@
 
         <SidebarComponent :active="sidebarIsOpen">
           <AddPost
-            :title="'Create new post'"
+            :title="editingPost ? 'Post editing' : 'Create new post'"
+            :postToEdit="editingPost"
             :userId="user.id"
             @close="handlerCloseSidebar"
             @add-post="handlerAddPost"
+            @post-updated="postUpdated"
             v-if="addingPost"
           />
 
           <PostPreview
             :post="posts.find(post => post.id === openedPostId)"
             @delete="handlerDeletePost"
+            @edit-post="handlerEditPost"
             v-if="openedPostId"
           />
         </SidebarComponent>
