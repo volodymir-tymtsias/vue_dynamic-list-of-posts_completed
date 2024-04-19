@@ -13,9 +13,9 @@
 </script>
 
 <template>
-  <div className="field" data-cy="BodyField">
-    <label className="label" :htmlFor="`comment-${inputName}`">{{ title }}</label>
-    <div className="control">
+  <div class="field" data-cy="BodyField">
+    <label class="label" :htmlFor="`comment-${inputName}`">{{ title }}</label>
+    <div class="control">
       <textarea
         :id="`comment-${inputName}`"
         :name="inputName"

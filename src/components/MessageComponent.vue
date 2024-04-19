@@ -15,7 +15,7 @@
 
 <template>
   <article
-    class="message is-danger"
+    class="message is-danger is-small"
     :class="{ 'message--hidden': !active }"
   >
     <div class="message-header">

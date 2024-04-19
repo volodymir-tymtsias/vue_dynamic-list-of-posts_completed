@@ -3,10 +3,6 @@
   max-height: 100%;
   transition: all 0.3s ease;
 
-  &:not(:last-child) {
-    margin-bottom: 0;
-  }
-
   &--hidden {
     max-height: 0;
     transform: scaleY(0);

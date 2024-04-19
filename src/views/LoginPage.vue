@@ -1,6 +1,6 @@
 <script>
   import { createUser, getUser, getUsers } from '@/api/users';
-import LoaderSpiner from '@/components/LoaderSpiner.vue';
+  import LoaderSpiner from '@/components/LoaderSpiner.vue';
   import NeedToRegister from '@/components/NeedToRegister.vue';
   import { getLocalUser } from '@/helpers/getLocalUser';
 
@@ -22,21 +22,12 @@ import LoaderSpiner from '@/components/LoaderSpiner.vue';
         user: getLocalUser(),
       };
     },
-    // watch: {
-    //   user: {
-    //     deep: true,
-    //     handler() {
-    //       localStorage.setItem('user', JSON.stringify(this.user));
-    //     },
-    //   }
-    // },
     mounted() {
       if (this.user.id) {
         this.errorMessage = '';
         this.preLoadingUser = true;
         getUser(this.user.id)
           .then(({ data }) => {
-            // this.user = data;
             localStorage.setItem('user', JSON.stringify(data));
             this.$router.push({ path: "/" });
           })

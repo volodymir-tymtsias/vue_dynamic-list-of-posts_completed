@@ -1,8 +1,9 @@
 <script>
-import { createPost, updatePost } from '@/api/posts';
-import InputField from './InputField.vue';
-import TextAreaField from './TextAreaField.vue';
-import MessageComponent from './MessageComponent.vue';
+  import { createPost, updatePost } from '@/api/posts';
+  import InputField from './InputField.vue';
+  import TextAreaField from './TextAreaField.vue';
+  import MessageComponent from './MessageComponent.vue';
+  import PostLoader from './PostLoader.vue';
 
   export default {
     name: 'AddPost',
@@ -10,6 +11,7 @@ import MessageComponent from './MessageComponent.vue';
       InputField,
       TextAreaField,
       MessageComponent,
+      PostLoader,
     },
     emits: ['close', 'add-post', 'post-updated'],
     props: {
@@ -103,7 +105,9 @@ import MessageComponent from './MessageComponent.vue';
       <p>{{ errorMessage }}</p>
     </MessageComponent>
 
-    <form @submit.prevent="handlerSubmit">
+    <PostLoader v-if="loading" />
+
+    <form @submit.prevent="handlerSubmit" v-else>
       <InputField
         :title="'Title'"
         :inputName="'title'"

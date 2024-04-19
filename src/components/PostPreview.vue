@@ -1,13 +1,23 @@
 <script>
+  import CommentsList from './CommentsList.vue';
+
   export default {
     name: 'PostPreview',
+    components: {
+      CommentsList,
+    },
     emits: ['delete', 'edit-post'],
     props: {
       post: Object,
     },
-    methods: {
-      
+    data() {
+      return {
+        loading: false,
+        errorMessage: '',
+        comments: [],
+      };
     },
+    
   }
 </script>
 
@@ -33,5 +43,7 @@
       </div>
     </div>
     <p data-cy="PostBody">{{ post.body }}</p>
+
+    <CommentsList :postId="post.id" :key="post.id"/>
   </div>
 </template>

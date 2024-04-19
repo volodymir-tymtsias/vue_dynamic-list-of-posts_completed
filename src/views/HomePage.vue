@@ -8,6 +8,7 @@
   import SidebarComponent from '@/components/SidebarComponent.vue';
   import AddPost from '@/components/AddPost.vue';
   import PostPreview from '@/components/PostPreview.vue';
+  import NoCommentsYet from '@/components/NoCommentsYet.vue';
 
   export default {
     name: 'HomePage',
@@ -19,6 +20,7 @@
       SidebarComponent,
       AddPost,
       PostPreview,
+      NoCommentsYet,
     },
     data() {
       return {
@@ -152,9 +154,7 @@
                     v-if="posts.length > 0"
                   />
 
-                  <div className="block" v-else>
-                    <p className="is-size-6 has-text-centered">No posts yet</p>
-                  </div>
+                  <NoCommentsYet :text="'posts'" v-else/>
                 </template>
               </template>
             </div>
