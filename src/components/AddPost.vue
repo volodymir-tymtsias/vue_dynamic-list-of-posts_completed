@@ -2,12 +2,14 @@
 import { createPost } from '@/api/posts';
 import InputField from './InputField.vue';
 import TextAreaField from './TextAreaField.vue';
+import MessageComponent from './MessageComponent.vue';
 
   export default {
     name: 'AddPost',
     components: {
       InputField,
       TextAreaField,
+      MessageComponent,
     },
     emits: ['close', 'add-post'],
     props: {
@@ -78,6 +80,13 @@ import TextAreaField from './TextAreaField.vue';
 <template>
   <div class="content">
     <h2>{{ title }}</h2>
+
+    <MessageComponent 
+      :active="errorMessage !== ''"
+      @hide="errorMessage = ''"
+    >
+      <p>{{ errorMessage }}</p>
+    </MessageComponent>
 
     <form @submit.prevent="handlerSubmit">
       <InputField

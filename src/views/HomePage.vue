@@ -101,6 +101,13 @@
                 </button>
               </div>
 
+              <MessageComponent 
+                :active="errorMessage !== ''"
+                @hide="errorMessage = ''"
+              >
+                <p>{{ errorMessage }}</p>
+              </MessageComponent>
+
               <PostLoader v-if="loading" />
 
               <template v-else>
@@ -117,14 +124,6 @@
                   </div>
                 </template>
               </template>
-
-              <MessageComponent 
-                class="is-danger" 
-                :active="errorMessage !== ''"
-                @hide="errorMessage = ''"
-              >
-                <p>{{ errorMessage }}</p>
-              </MessageComponent>
             </div>
           </div>
         </div>
