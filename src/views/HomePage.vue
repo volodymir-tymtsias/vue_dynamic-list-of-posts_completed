@@ -1,5 +1,5 @@
 <script>
-  import { getPosts } from '@/api/posts';
+  import { deletePost, getPosts } from '@/api/posts';
   import { getLocalUser } from '@/helpers/getLocalUser';
   import PostLoader from '@/components/PostLoader.vue';
   import HeaderComponent from '@/components/HeaderComponent.vue';
@@ -7,6 +7,7 @@
   import MessageComponent from '@/components/MessageComponent.vue';
   import SidebarComponent from '@/components/SidebarComponent.vue';
   import AddPost from '@/components/AddPost.vue';
+  import PostPreview from '@/components/PostPreview.vue';
 
   export default {
     name: 'HomePage',
@@ -17,6 +18,7 @@
       MessageComponent,
       SidebarComponent,
       AddPost,
+      PostPreview,
     },
     data() {
       return {
@@ -74,7 +76,22 @@
         this.posts = [...this.posts, newPost];
         this.openedPostId = newPost.id;
         this.addingPost = false;
-      }
+      },
+      handlerDeletePost() {
+        this.sidebarIsOpen = false;
+        this.loading = true;
+        deletePost(this.openedPostId)
+        .then(() => {
+          this.posts = this.posts.filter(post => post.id !== this.openedPostId);
+        })
+        .catch(() => {
+          this.errorMessage = 'Unable to delete post';
+        })
+        .finally(() => {
+          this.loading = false;
+          this.openedPostId = null;
+        });
+      },
     },
   }
 </script>
@@ -135,6 +152,12 @@
             @close="handlerCloseSidebar"
             @add-post="handlerAddPost"
             v-if="addingPost"
+          />
+
+          <PostPreview
+            :post="posts.find(post => post.id === openedPostId)"
+            @delete="handlerDeletePost"
+            v-if="openedPostId"
           />
         </SidebarComponent>
       </div>
