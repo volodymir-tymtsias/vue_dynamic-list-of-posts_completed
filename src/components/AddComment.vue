@@ -1,7 +1,6 @@
 <script>
   import { createComment } from '@/api/comments';
   import InputField from './InputField.vue';
-  import MessageComponent from './MessageComponent.vue';
   import TextAreaField from './TextAreaField.vue';
 
   export default {
@@ -9,9 +8,8 @@
     components: {
       InputField,
       TextAreaField,
-      MessageComponent,
     },
-    emits: ['close', 'add-comment'],
+    emits: ['close', 'add-comment', 'error'],
     props: {
       postId: Number,
       name: String,
@@ -26,7 +24,6 @@
         errorAauthorName: '',
         errorAuthorEmail: '',
         errorCommentBody: '',
-        errorMessage: '',
       };
     },
     watch: {
@@ -57,7 +54,7 @@
         this.$emit('close');
       },
       handlerSubmit() {
-        this.errorMessage = '';
+        this.$emit('error', '');
         this.authorName = this.authorName.trim();
         this.authorEmail = this.authorEmail.trim();
         this.commentBody = this.commentBody.trim();
@@ -83,7 +80,7 @@
             this.$emit('close');
           })
           .catch(() => {
-            this.errorMessage = 'Unable to create comment';
+            this.$emit('error', 'Unable to create comment');
           })
           .finally(() => {
             this.loading = false;
@@ -94,13 +91,6 @@
 </script>
 
 <template>
-  <MessageComponent
-    :active="errorMessage !== ''"
-    @hide="errorMessage = ''"
-  >
-    <p>{{ errorMessage }}</p>
-  </MessageComponent>
-
   <form @submit.prevent="handlerSubmit">
     <InputField
       :title="'Author Name'"
