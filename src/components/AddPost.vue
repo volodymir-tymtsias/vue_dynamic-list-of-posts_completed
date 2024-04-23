@@ -113,6 +113,7 @@
         :inputName="'title'"
         :placeholder="'Post title'"
         :errorMessage="errorTitle"
+        :type="'text'"
         v-model="newTitle"
       />
 

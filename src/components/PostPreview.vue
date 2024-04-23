@@ -1,10 +1,12 @@
 <script>
+  import AddComment from './AddComment.vue';
   import CommentsList from './CommentsList.vue';
 
   export default {
     name: 'PostPreview',
     components: {
       CommentsList,
+      AddComment,
     },
     emits: ['delete', 'edit-post'],
     props: {
@@ -15,9 +17,20 @@
         loading: false,
         errorMessage: '',
         comments: [],
+        addCommentsIsOpen: false,
+        authorName: '',
+        authorEmail: '',
       };
     },
-    
+    methods: {
+      toggleAddCommentsIsOpen() {
+        this.addCommentsIsOpen = !this.addCommentsIsOpen;
+      },
+      handlerAddComment(event) {
+        this.authorName = event.name;
+        this.authorEmail = event.email;
+      }
+    }
   }
 </script>
 
@@ -44,6 +57,19 @@
     </div>
     <p data-cy="PostBody">{{ post.body }}</p>
 
-    <CommentsList :postId="post.id" :key="post.id"/>
+    <CommentsList 
+      :postId="post.id" 
+      @open-form="toggleAddCommentsIsOpen"
+      v-if="!addCommentsIsOpen"
+    />
+
+    <AddComment
+      :postId="post.id"
+      :name="this.authorName"
+      :email="this.authorEmail"
+      @close="toggleAddCommentsIsOpen"
+      @add-comment="handlerAddComment"
+      v-if="addCommentsIsOpen"
+    />
   </div>
 </template>

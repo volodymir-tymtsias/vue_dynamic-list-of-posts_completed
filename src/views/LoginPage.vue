@@ -95,7 +95,7 @@
       <div class="field">
         <label class="label" htmlFor="user-email"> Email </label>
 
-        <div class="control has-icons-left" :class="{ ['is-loading']: loading }">
+        <div class="control has-icons-left" :class="{ 'is-loading': loading }">
           <input
             type="email"
             id="user-email"
@@ -124,7 +124,7 @@
         <button 
           type="submit"
           class="button is-primary"
-          :class="{ ['is-loading']: loading }"
+          :class="{ 'is-loading': loading }"
           :disabled="!email"
         >
           {{ needRegister ? 'Register' : 'Login' }}

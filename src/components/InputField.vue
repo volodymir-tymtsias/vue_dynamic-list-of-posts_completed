@@ -7,6 +7,7 @@
       errorMessage: String,
       placeholder: String,
       modelValue: String,
+      type: String,
     },
     emits: ['update:modelValue'],
   }
@@ -19,17 +20,20 @@
     </label>
     <div class="control has-icons-left has-icons-right">
       <input
-        type="text"
+        :type="type"
         class="input"
         :name="inputName"
         :id="`comment-author-name-${inputName}`"
         :placeholder="placeholder"
-        :class="errorMessage ? 'is-danger' : ''"
+        :class="{ 'is-danger': errorMessage }"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
       />
       <span class="icon is-small is-left">
-        <i class="fas fa-user"></i>
+        <i 
+          class="fas" 
+          :class="type === 'email' ? 'fa-envelope' : 'fa-user'"
+        ></i>
       </span>
 
       <span

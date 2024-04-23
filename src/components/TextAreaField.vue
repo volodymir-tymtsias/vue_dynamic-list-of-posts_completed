@@ -21,7 +21,7 @@
         :name="inputName"
         :placeholder="placeholder"
         class="textarea"
-        :class="errorMessage ? 'is-danger' : ''"
+        :class="{ 'is-danger': errorMessage }"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
       ></textarea>

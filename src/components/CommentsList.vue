@@ -11,6 +11,7 @@
       PostLoader,
       NoCommentsYet,
     },
+    emits: ['open-form'],
     props: {
       postId: Number,
     },
@@ -95,6 +96,7 @@
     <button 
       type="button" 
       class="button is-link"
+      @click="$emit('open-form')"
       v-if="!errorMessage"
     >
       Write a comment

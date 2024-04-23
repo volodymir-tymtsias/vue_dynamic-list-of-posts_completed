@@ -129,7 +129,7 @@
                 <button 
                   type="button" 
                   class="button is-link"
-                  :class="addingPost ? 'is-light' : ''"
+                  :class="{ 'is-light' : addingPost }"
                   @click="handlerAddNewPost"
                 >
                   Add New Post
@@ -176,6 +176,7 @@
             :post="posts.find(post => post.id === openedPostId)"
             @delete="handlerDeletePost"
             @edit-post="handlerEditPost"
+            :key="openedPostId"
             v-if="openedPostId"
           />
         </SidebarComponent>

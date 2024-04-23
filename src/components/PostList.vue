@@ -31,7 +31,7 @@
           <button 
             type="button" 
             class="button is-link"
-            :class="openedPostId !== post.id ? 'is-light' : ''"
+            :class="{'is-light' : openedPostId !== post.id}"
             @click="toggleOpenSidebar(post.id)"
           >
             {{ openedPostId === post.id ? 'Close' : 'Open' }}
